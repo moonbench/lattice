@@ -1,7 +1,10 @@
 <?php
-
 /*
- * Can be included in any page to require the user be logged in, otherwise return a 403
+ * Simple authentication gate
+ *
+ * This an be included on any script
+ * It will require that the user be authenticated with a valid session
+ * Otherwise they will recieve a 403 error and execution will terminate
  */
 
 if( !\user_controller::current()->is_logged_in ){
