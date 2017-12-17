@@ -2,7 +2,7 @@
 namespace app\model;
 
 /*
- * A specific authentication for a user
+ * Represents a specific authentication for a user
  */
 
 class session extends model {
@@ -17,11 +17,19 @@ class session extends model {
   public $expires_at;
   public $deleted_at;
 
+  /**
+   * Getter
+   *
+   * Converts user ids into user models when accessed
+   */
   public function __get($property){
     if($property == "user" && !($this->user instanceof \user)) $this->user = $this->lazy_load_user();
     return parent::__get($property);
   }
 
+  /**
+   * Create or update the database row for this session
+   */
   public function save(){
     self::__get("user");
 
@@ -31,6 +39,9 @@ class session extends model {
 		   );
   }
 
+  /**
+   * Find a user model associated with our user (id) value
+   */
   protected function lazy_load_user(){
     if(!$this->user) return new \user();
     $user = \user_controller::find_by_id( $this->user );
