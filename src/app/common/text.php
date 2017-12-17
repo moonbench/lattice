@@ -1,4 +1,27 @@
 <?php
+/*
+ * Common text handling functions
+ */
+
+
+/**
+ * Convert links into HTML anchor tags
+ */
+function make_links_clickable($text){
+  return preg_replace('!(((f|ht)tp(s)?://)[-a-zA-Z?-??-?()0-9@:%_+.~#?&;//=]+)!i', '<a href="$1" target="_blank">$1</a>', $text);
+}
+
+/**
+ * Convert basic markup into HTML tags
+ *
+ * Valid markup is:
+ *  [i][/i] - Italics
+ *  [b][/b] - Bold
+ *  [u][/u] - Underline
+ *  [big][/big] - Big class
+ *  [strike] - Strikethrough
+ *  [spoiler] - Spoiler class
+ */
 function apply_markup($text){
   $i_reg = '/\[i\](.+)\[\/i\]/';
   $b_reg = '/\[b\](.+)\[\/b\]/';
@@ -18,9 +41,5 @@ function apply_markup($text){
     }
   }
   return $text;
-}
-
-function make_links_clickable($text){
-  return preg_replace('!(((f|ht)tp(s)?://)[-a-zA-Z?-??-?()0-9@:%_+.~#?&;//=]+)!i', '<a href="$1" target="_blank">$1</a>', $text);
 }
 ?>

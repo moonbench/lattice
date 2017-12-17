@@ -1,24 +1,14 @@
 <?php
+/*
+ * Common functions for handling images
+ */
 require_once APP_ROOT . "/common/files.php";
 
-function get_local_source_from_url_for_type( $url, $filetype ){
-  switch( $filetype ){
-  case IMAGETYPE_GIF:
-    return imagecreatefromgif( $url );
-    break;
-  case IMAGETYPE_JPEG:
-    return imagecreatefromjpeg( $url );
-    break;
-  case IMAGETYPE_PNG:
-    return imagecreatefrompng( $url );
-    break;
-  }
-  if( !isset( $source_image_data )){
-    trigger_error("Unable to reade image data");
-    return false;
-  }
-}
 
+/**
+ * Generate a new width and height by scaling an image down to be
+ * no larger than the provided max width and max height
+ */
 function thumbnail_dimensions_from( $width, $height, $max_width, $max_height ){
   $aspect_ratio = $width / $height;
   $thumb_ratio = $max_width / $max_height;
@@ -40,6 +30,9 @@ function thumbnail_dimensions_from( $width, $height, $max_width, $max_height ){
   return array( $thumbnail_width, $thumbnail_height );
 }
 
+/**
+ * Create a new image by scaling down an exiting image
+ */
 function create_thumbnail( $url, $thumb_url, $max_width, $max_height ){
   $url = APP_ROOT . "/../" . $url;
 
@@ -60,5 +53,27 @@ function create_thumbnail( $url, $thumb_url, $max_width, $max_height ){
     return false;
   }
   return true;
+}
+
+
+/**
+ * Obtain an image object from a path
+ */
+function get_local_source_from_url_for_type( $url, $filetype ){
+  switch( $filetype ){
+  case IMAGETYPE_GIF:
+    return imagecreatefromgif( $url );
+    break;
+  case IMAGETYPE_JPEG:
+    return imagecreatefromjpeg( $url );
+    break;
+  case IMAGETYPE_PNG:
+    return imagecreatefrompng( $url );
+    break;
+  }
+  if( !isset( $source_image_data )){
+    trigger_error("Unable to reade image data");
+    return false;
+  }
 }
 ?>
