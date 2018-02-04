@@ -6,9 +6,6 @@ namespace app;
  *
  * This removes the need to "require" most files
  *
- * It will match \foo_controller to autoload controllers (ex, named "foo")
- * from the app/controllers folder
- * 
  * It will match \foo to autoload models (ex, named "foo") from the
  * app/models folder
  *
@@ -41,31 +38,13 @@ class autoloader{
    * This is automatically called when attempting to use a new class
    */
   public function notify( $class ){
-
-    // Matches "\foo_controller"
-    if( preg_match('/^([a-zA-Z0-9]+)_controller$/', $class, $matches) ){
-      return $this->load_controller( $matches[1] );
-
-    // Matches "\foo" (shorthand for models)
-    } else if( preg_match('/^([a-zA-Z0-9]+)$/', $class, $matches) ){
+    if( preg_match('/^([a-zA-Z0-9]+)$/', $class, $matches) ){
       return $this->load_model( $matches[1] );
-
-    // Matches "\module\foo"
     } else {
       return $this->load_general( $class );
     }
   }
 
-
-  /**
-   * Attempt to require a controller class
-   */
-  protected function load_controller( $name ){
-    $path = $this->base_path . "/controller/" . $name . ".php";
-    if( self::load_file( $path )){
-      class_alias("\\app\\controller\\" . $name, $name . "_controller");
-    }
-  }
 
   /**
    * Attempt to require a model class

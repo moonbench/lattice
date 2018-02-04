@@ -7,8 +7,12 @@ namespace app\model;
 
 abstract class model implements \JsonSerializable{
   static protected $current_transaction = null;
+  protected static $cache = [];
 
 
+  #
+  # Magic methods
+  #
   /**
    * Create a new model
    *
@@ -23,7 +27,6 @@ abstract class model implements \JsonSerializable{
       $this->created_at = date("Y-m-d H:i:s");
     }
   }
-
 
   /**
    * Magic getter
@@ -44,6 +47,10 @@ abstract class model implements \JsonSerializable{
   }
 
 
+
+  #
+  # Functions for creating a new model
+  #
   /**
    * Take in an array of key-values and assign them to the model
    */
@@ -66,6 +73,11 @@ abstract class model implements \JsonSerializable{
     return call_user_func(array($this, $method_name));
   }
 
+
+
+  #
+  # JSON serialization
+  #
   /**
    * Return an array of all of this model's properties and values
    */
@@ -78,6 +90,125 @@ abstract class model implements \JsonSerializable{
   }
 
 
+
+  #
+  # Finding models from the database
+  #
+  /**
+   * Get a single instance of this model from a data array
+   */
+  protected static function get_single_from_data( $data ){
+    if(count($data)<1) return null;
+    $class = get_called_class();
+    return new $class($data[0]);
+  }
+
+  /**
+   * Get all instances of this model from a data array
+   */
+  protected static function get_many_from_data( $data ){
+    $objects = array();
+    $class = get_called_class();
+    foreach($data as $object_data){
+      $objects[] = new $class($object_data);
+    }
+    return $objects;
+  }
+
+  /**
+   * Check if we've seen this object
+   */
+  protected static function is_in_cache($key){
+    $class = get_called_class();
+    return array_key_exists($class, self::$cache) && array_key_exists($key, self::$cache[$class]);
+  }
+
+  /**
+   * Store a copy of this object for the lifetime of this class
+   */
+  protected static function insert_into_cache($key, $value){
+    $class = get_called_class();
+    if(!array_key_exists($class, self::$cache)) self::$cache[$class] = [];
+    self::$cache[$class][$key] = $value;
+    if(is_array($value)){
+      foreach($value as $specific){
+        self::$cache[$class][$specific->id] = $specific;
+      }
+    }
+  }
+
+  /**
+   * Retrieve a stored copy of an object
+   */
+  protected static function get_from_cache($key){
+    return self::$cache[static::$model_class][$key];
+  }
+
+
+  /**
+   * Get a single object from the database for the provided column and value
+   */
+  protected static function find_one_by_col_and_val( $column, $value ){
+    $data = sql_find("SELECT * FROM `". static::$table ."` WHERE `" . $column ."` = :v AND `deleted_at` IS NULL ORDER BY `created_at` DESC LIMIT 1", [":v" => $value]);
+    return self::get_single_from_data($data);
+  }
+
+  /**
+   * Get all possible objects from the database for the provided column and value
+   */
+  protected static function find_all_by_col_and_val( $column, $value ){
+    $data = sql_find("SELECT * FROM `". static::$table ."` WHERE `" . $column ."` = :v AND `deleted_at` IS NULL ORDER BY `created_at` DESC", [":v" => $value]);
+    return self::get_many_from_data($data);
+  }
+
+
+  /**
+   * Get all objects from the database for this model
+   */
+  public static function find_all(){
+    if(self::is_in_cache("all")) return self::get_from_cache("all");
+
+    $data = sql_find("SELECT * FROM `". static::$table ."` WHERE `deleted_at` IS NULL ORDER BY `created_at` DESC");
+    $objects = self::get_many_from_data($data);
+
+    self::insert_into_cache("all", $objects);
+    return $objects;
+  }
+
+  /**
+   * Find a single object with the given id
+   */
+  public static function find_by_id( $id ){
+    if(self::is_in_cache($id)) return self::get_from_cache($id);
+
+    $object = self::find_one_by_col_and_val("id", $id);
+
+    self::insert_into_cache($id, $object);
+    return $object;
+  }
+
+
+  /**
+   * Find the last-inserted object
+   */
+  public static function find_last( $count=1 ){
+    if(self::is_in_cache("last".$count)) return self::get_from_cache("last".$count);
+    if(self::is_in_cache("all")){
+      $set = array_slice(self::get_from_cache("all"), 1-$count);
+      self::insert_into_cache("last".$count, $set);
+      return $set;
+    }
+
+    $count = intval($count);
+    $data = sql_find("SELECT * FROM `". static::$table . "` WHERE `deleted_at` IS NULL ORDER BY `created_at` DESC LIMIT " . $count . ";");
+    $objects = self::get_many_from_data($data);
+    self::insert_into_cache("last".$count, $objects);
+    return $objects;
+  }
+
+  #
+  # Saving models to the database
+  #
   /**
    * A save method which can be called by models to write their data to the database
    *
@@ -110,7 +241,7 @@ abstract class model implements \JsonSerializable{
       self::update( $this->id, $columns, $values );
     } else {
       self::create( $columns, $values );
-      $this->id = \database_controller::last_id();
+      $this->id = \app\database::last_id();
     }
   }
 
@@ -131,7 +262,7 @@ abstract class model implements \JsonSerializable{
     $stmt_value_placeholders = implode(", ", $stmt_value_placeholders);
 
     $stmt = "INSERT INTO `$db_table` ($stmt_columns) VALUES ($stmt_value_placeholders)";
-    \database_controller::set( $stmt, $values);
+    sql_set( $stmt, $values);
   }
 
   /**
@@ -148,8 +279,14 @@ abstract class model implements \JsonSerializable{
     $stmt_column_to_placeholder_pairings = implode(", ", $stmt_column_to_placeholder_pairings);
 
     $stmt = "UPDATE `$db_table` SET $stmt_column_to_placeholder_pairings WHERE `$db_table`.`id` = :stmtUpdateId LIMIT 1;";
-    \database_controller::set( $stmt, $values );
+    sql_set( $stmt, $values );
   }
+
+
+
+  #
+  # Deleting models from the database
+  #
 
   /**
    * Marks the "deleted_at" property for this model, and saves that change
@@ -160,6 +297,11 @@ abstract class model implements \JsonSerializable{
   }
 
 
+
+  #
+  # Database transaction utilities
+  #
+
   /**
    * Start a database transaction
    *
@@ -168,7 +310,7 @@ abstract class model implements \JsonSerializable{
   protected static function start_transaction(){
     if( isset( self::$current_transaction) && self::$current_transaction !== null ) return false;
     self::$current_transaction = get_called_class();
-    \database_controller::beginTransaction(self::$current_transaction);
+    \app\database::beginTransaction(self::$current_transaction);
   }
 
   /**
@@ -179,10 +321,10 @@ abstract class model implements \JsonSerializable{
 
     if( !\app\error::is_empty() ){
       trigger_error("Unable to save in " . get_called_class());
-      \database_controller::rollBack(self::$current_transaction);
+      \app\database::rollBack(self::$current_transaction);
       return false;
     }
-    \database_controller::commit(self::$current_transaction);
+    \app\database::commit(self::$current_transaction);
 
     self::$current_transaction = null;
     return true;

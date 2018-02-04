@@ -4,9 +4,9 @@ namespace app;
  * Main entry point into the framework
  *
  * Once included in any script, this will set up a common environment
- * which provides access to all of the scripts, models, and controllers
- * used within this framework.
+ * which provides access to the framework
  */
+
 /**
  * Identify where we are running from and configure the root values accordingly
  */

@@ -1,5 +1,5 @@
 # Lattice
-A lightweight PHP framework built using a MVC pattern.
+A lightweight PHP framework built using a pseudo-MVC pattern.
 
 
 # Quick start
@@ -143,62 +143,6 @@ render("foo", ["some_variable" => "Hello world."]);
 And template file `app/view/bar/baz.tpl.php` could be included by the following script, but saved as a string:
 ```php
 $my_output = render_to_string("bar/baz", ["some_variable" => "Hello world."]);
-
-```
-
-
-## Controllers
-Controllers provide methods to find and manipulate the models.
-
-Controllers inherit from the abstract `controller` classed located in `app/controller/controller.php`. This provides the following methods:
-
-Finding models:
-```php
-public static function find_all();
-public static function find_by_id( $id );
-public static function find_all_by_id( $id );
-public static function find_last( $count );
-
-protected static function find_one_by_col_and_val( $column, $value );
-protected static function find_all_by_col_and_val( $column, $value );
-
-protected static function is_in_cache( $key );
-protected static function insert_into_cache( $key, $value );
-```
-
-Parsing data from the database:
-```php
-protected static function get_single_from_data( $data )
-protected static function get_many_from_data( $data )
-```
-
-### Using a controller
-Controllers can be called by wrapping the controller name with a `\` and `_controller`.
-
-For example, a controller called `something` could be called with:
-```php
-<?php
-require "app/main.php";
-
-$all_these_models = \something_controller->find_all();
-
-$another_model = \something_controller->find_by_id(1);
-?>
-
-```
-
-### Linking a controller with a database table
-Similar to models, controllers can be given a database table to coordinate their code with. And similar to models, it is specified by setting the `$table` property.
-
-```php
-<?php
-namespace app\controller;
-
-class something extends controller {
-  protected static $table = "somethings";
-  ...
-}
-?>
 
 ```
 

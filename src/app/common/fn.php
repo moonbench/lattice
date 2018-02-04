@@ -87,13 +87,13 @@ function render_to_string($template, $vars = []){
  * Shorthand function to select from a database
  */
 function sql_find($query, $params = []){
-  return \database_controller::find($query, $params);
+  return \app\database::find($query, $params);
 }
 
 /**
  * Shorthand function to set in a database
  */
 function sql_set($query, $params = []){
-  return \database_controller::set($query, $params);
+  return \app\database::set($query, $params);
 }
 ?>
