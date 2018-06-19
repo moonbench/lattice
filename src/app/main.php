@@ -2,7 +2,7 @@
 namespace app;
 
 function determine_paths(){
-  define('APP_ROOT', dirname(__FILE__));
+  define('APP_ROOT', dirname(__FILE__) . "/");
 
   $site_root = parse_ini_file(APP_ROOT . "/config/site.default.ini")["site_root"];
 
