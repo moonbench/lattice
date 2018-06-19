@@ -4,12 +4,11 @@ namespace app;
 function determine_paths(){
   define('APP_ROOT', dirname(__FILE__) . "/");
 
-  $site_root = parse_ini_file(APP_ROOT . "/config/site.default.ini")["site_root"];
-
-  // overwrite with local config if it exists
-  $local_config = APP_ROOT . "/config/site.ini";
-  if(file_exists($local_config)) $site_root = parse_ini_file($local_config)["site_root"];
-  define('SITE_ROOT', $site_root);  
+  $site_config = parse_ini_file(APP_ROOT."config/site.default.ini");
+  if(file_exists(APP_ROOT."config/site.ini"))
+    $site_config = parse_ini_file(APP_ROOT."config/site.ini");
+  define('SITE_CONFIG', $site_config);
+  define('SITE_ROOT', SITE_CONFIG["site_root"]);
 }
 
 function add_common_functions(){

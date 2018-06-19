@@ -2,7 +2,6 @@
 namespace app;
 
 class database{
-  const CONFIG_FILE = "/config/database.ini";
   protected static $username;
   protected static $password;
   protected static $hostname;
@@ -58,7 +57,10 @@ class database{
   protected static function setup(){
     if( isset(self::$connection)) return;
 
-    $config_data = parse_ini_file( APP_ROOT . self::CONFIG_FILE );
+    $config_data = parse_ini_file(APP_ROOT."config/database.default.ini");
+    if(file_exists(APP_ROOT."config/database.ini"))
+      $config_data = parse_ini_file(APP_ROOT."config/database.ini");
+
     self::$username = $config_data["username"];
     self::$password = $config_data["password"];
     self::$hostname = $config_data["hostname"];
