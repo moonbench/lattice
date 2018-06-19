@@ -1,27 +1,17 @@
 <?php
-/*
- * Common text handling functions
- */
 
+function clean($string){
+  return htmlentities(preg_replace('/([\\r\\n][\\r\\n]){2,}/i',"\n\n",trim($string)));
+}
 
-/**
- * Convert links into HTML anchor tags
- */
+function clean_br($string){
+  return nl2br(clean($string));
+}
+
 function make_links_clickable($text){
   return preg_replace('!(((f|ht)tp(s)?://)[-a-zA-Z?-??-?()0-9@:%_+.~#?&;//=]+)!i', '<a href="$1" target="_blank">$1</a>', $text);
 }
 
-/**
- * Convert basic markup into HTML tags
- *
- * Valid markup is:
- *  [i][/i] - Italics
- *  [b][/b] - Bold
- *  [u][/u] - Underline
- *  [big][/big] - Big class
- *  [strike] - Strikethrough
- *  [spoiler] - Spoiler class
- */
 function apply_markup($text){
   $i_reg = '/\[i\](.+)\[\/i\]/';
   $b_reg = '/\[b\](.+)\[\/b\]/';

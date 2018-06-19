@@ -1,16 +1,15 @@
 <?php
-/*
- * Simple authentication gate
- *
- * This an be included on any script
- * It will require that the user be authenticated with a valid session
- * Otherwise they will recieve a 403 error and execution will terminate
- */
+function api_fail(){}
+function web_fail(){
+  //header('Location: '.SITE_ROOT.'/403.php');
+}
 
 if( !\user::current()->is_logged_in ){
   http_response_code(403);
-  header('Location: /login?desired_request=' . $_SERVER["REQUEST_URI"]);
+
+  if(defined("API_ROOT")) api_fail();
+  else web_fail();
+
   die("Not authorized.");
 }
-
 ?>
