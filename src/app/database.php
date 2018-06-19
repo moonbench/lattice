@@ -2,10 +2,6 @@
 namespace app;
 
 class database{
-  protected static $username;
-  protected static $password;
-  protected static $hostname;
-  protected static $database;
   protected static $connection;
   protected static $current_transaction = null;
 
@@ -57,25 +53,20 @@ class database{
   protected static function setup(){
     if( isset(self::$connection)) return;
 
-    $config_data = parse_ini_file(APP_ROOT."config/database.default.ini");
+    $config = parse_ini_file(APP_ROOT."config/database.default.ini");
     if(file_exists(APP_ROOT."config/database.ini"))
-      $config_data = parse_ini_file(APP_ROOT."config/database.ini");
+      $config = parse_ini_file(APP_ROOT."config/database.ini");
 
-    self::$username = $config_data["username"];
-    self::$password = $config_data["password"];
-    self::$hostname = $config_data["hostname"];
-    self::$database = $config_data["database"];
-
-    self::$connection = self::get_new_connection();
+    self::$connection = self::get_new_connection($config["username"], $config["password"], $config["hostname"], $config["database"]);
   }
 
-  protected static function get_new_connection(){
-    mysqli_connect( self::$hostname, self::$username, self::$password );
+  protected static function get_new_connection($username, $password, $hostname, $database){
+    mysqli_connect($hostname, $username, $password);
 
     $database_selection = "mysql:";
-    $database_selection .= "dbname=" . self::$database . ";";
-    $database_selection .= "host=" . self::$hostname . ";";
-    return new \PDO( $database_selection, self::$username, self::$password );
+    $database_selection .= "dbname=${database};";
+    $database_selection .= "host=${hostname};";
+    return new \PDO($database_selection, $username, $password);
   }
 
   protected static function handle_errors_if_any( $stmt, $query, $params ){
