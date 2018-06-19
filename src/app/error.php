@@ -18,7 +18,7 @@ class error{
   }
 
   /**
-   * This is bound to the PHP environment and automatically called whenever an error occurs
+   * This is automatically called when an error occurs anywhere
    */
   public static function php_error( $number, $string, $file, $line ){
     if($number == -1 && is_array($string)){

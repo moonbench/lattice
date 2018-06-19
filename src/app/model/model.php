@@ -1,4 +1,4 @@
-<?Php
+<?php
 namespace app\model;
 
 abstract class model implements \JsonSerializable{

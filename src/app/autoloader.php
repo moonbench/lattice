@@ -13,10 +13,6 @@ class autoloader{
     spl_autoload_unregister( array($this, 'notify') );
   }
 
-
-  /**
-   * This is automatically called when attempting to use a new class
-   */
   public function notify( $class ){
     if( preg_match('/^([a-zA-Z0-9]+)$/', $class, $matches) ){
       return $this->load_model( $matches[1] );
@@ -42,6 +38,7 @@ class autoloader{
       require_once( $file_path );
       return true;
     }
+
     trigger_error("Unable to find file for auto-inclusion: " . $file_path);
     return false;
   }

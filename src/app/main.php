@@ -1,9 +1,9 @@
 <?php
 namespace app;
 
-function determine_paths(){
-  define('APP_ROOT', dirname(__FILE__) . "/");
+define('APP_ROOT', dirname(__FILE__) . "/");
 
+function load_config(){
   $site_config = parse_ini_file(APP_ROOT."config/site.default.ini");
   if(file_exists(APP_ROOT."config/site.ini"))
     $site_config = parse_ini_file(APP_ROOT."config/site.ini");
@@ -12,18 +12,18 @@ function determine_paths(){
 }
 
 function add_common_functions(){
-  require_once APP_ROOT . "/common/fn.php";
+  require_once APP_ROOT . "common/fn.php";
 }
 
 function add_support_classes(){
-  require_once APP_ROOT . '/autoloader.php';
+  require_once APP_ROOT . 'autoloader.php';
   new \app\autoloader();
   set_error_handler('\app\error::php_error');
 }
 
 set_time_limit(45);
 
-determine_paths();
+load_config();
 add_common_functions();
 add_support_classes();
 
