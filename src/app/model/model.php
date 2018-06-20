@@ -4,13 +4,13 @@ namespace app\model;
 abstract class model implements \JsonSerializable{
   static protected $current_transaction = null;
   protected static $cache = [];
-  const TABLE_PREFIX = "site_";
+  const TABLE_PREFIX = "alphapz_";
 
 
   public function __construct($data = array()){
     $this->set_values($data);
 
-    if(property_exists($this, "created_at") && !isset($this->created_at) )
+    if(property_exists($this, "created_at") && !isset($this->created_at))
       $this->created_at = date("Y-m-d H:i:s");
   }
 
@@ -20,7 +20,7 @@ abstract class model implements \JsonSerializable{
   }
 
   public function __set($property, $value){
-    if(property_exists($this, $property) ){ $this->$property = $value; }
+    if(property_exists($this, $property)){ $this->$property = $value; }
   }
 
   public function jsonSerialize(){
@@ -180,7 +180,7 @@ abstract class model implements \JsonSerializable{
 
 
   protected static function start_transaction(){
-    if(isset(self::$current_transaction) && self::$current_transaction !== null ) return false;
+    if(isset(self::$current_transaction) && self::$current_transaction !== null) return false;
 
     self::$current_transaction = get_called_class();
     \app\database::beginTransaction(self::$current_transaction);

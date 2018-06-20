@@ -48,7 +48,7 @@ class image extends model {
     $image->filename = $upload['name'];
     $image->url = generate_url_for_file($upload, self::MEDIA_DIRECTORY);
 
-    copy_uploaded_file_to_directory( $upload, $image->url);
+    copy_uploaded_file_to_directory($upload, $image->url);
     if(!\app\error::is_empty()) return;
 
     list($width, $height) = getimagesize(APP_ROOT . "../" . $image->url);

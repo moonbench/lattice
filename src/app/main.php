@@ -27,6 +27,6 @@ load_config();
 add_common_functions();
 add_support_classes();
 
-if( session_status() !== PHP_SESSION_ACTIVE ) session_start();
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 ob_start("ob_gzhandler");
 ?>

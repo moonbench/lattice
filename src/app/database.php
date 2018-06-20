@@ -5,43 +5,47 @@ class database{
   protected static $connection;
   protected static $current_transaction = null;
 
-  public static function find( $query, $params = array() ){
-    $result = self::execute( $query, $params )->fetchAll();
-    if( is_array( $result )) return $result;
-    return array();
+  public static function find($query, $params = array()){
+    $result = self::execute($query, $params)->fetchAll();
+    return is_array($result) ? $result : [];
   }
 
-  public static function set( $query, $params ){
-    $stmt = self::execute( $query, $params );
+  public static function set($query, $params){
+    self::execute($query, $params);
   }
 
-  protected static function execute( $query, $params ){
-    if( !isset(self::$dbh) ) self::setup();
+  protected static function execute($query, $params){
+    self::setup();
 
-    $stmt = self::$connection->prepare( $query );
-    foreach( $params as $placeholder => $value ){
-      $stmt->bindValue( $placeholder, $value );
+    $stmt = self::$connection->prepare($query);
+    foreach($params as $placeholder => $value){
+      $stmt->bindValue($placeholder, $value);
     }
+
     $stmt->execute();
-    self::handle_errors_if_any( $stmt, $query, $params );
+    self::handle_errors_if_any($stmt, $query, $params);
+
     return $stmt;
   }
 
-  public static function beginTransaction( $key ){
+  public static function beginTransaction($key){
     if(self::$current_transaction != null) return;
-    self::$current_transaction = $key;
+
     self::setup();
+    self::$current_transaction = $key;
     self::$connection->beginTransaction();
   }
 
-  public static function commit( $key ){
+  public static function commit($key){
     if(self::$current_transaction != $key) return;
+
     self::$current_transaction = null;
     self::$connection->commit();
   }
 
-  public static function rollBack( $key ){
+  public static function rollBack($key){
     if(self::$current_transaction != $key) return;
+
     self::$current_transaction = null;
     self::$connection->rollBack();
   }
@@ -51,16 +55,16 @@ class database{
   }
 
   protected static function setup(){
-    if( isset(self::$connection)) return;
+    if(isset(self::$connection)) return;
 
     $config = parse_ini_file(APP_ROOT."config/database.default.ini");
     if(file_exists(APP_ROOT."config/database.ini"))
       $config = parse_ini_file(APP_ROOT."config/database.ini");
 
-    self::$connection = self::get_new_connection($config["username"], $config["password"], $config["hostname"], $config["database"]);
+    self::$connection = self::connect($config["username"], $config["password"], $config["hostname"], $config["database"]);
   }
 
-  protected static function get_new_connection($username, $password, $hostname, $database){
+  protected static function connect($username, $password, $hostname, $database){
     mysqli_connect($hostname, $username, $password);
 
     $database_selection = "mysql:";
@@ -69,18 +73,9 @@ class database{
     return new \PDO($database_selection, $username, $password);
   }
 
-  protected static function handle_errors_if_any( $stmt, $query, $params ){
-    if( $stmt->errorInfo() && $stmt->errorInfo()[0] != "0000"){
-      \app\error::php_error( -1, $stmt->errorInfo(), $query, $params );
-
-      if( 1==0 ){
-        ob_start();
-        echo("<pre>");
-        var_dump($stmt);
-        echo("</pre>");
-        $params = ob_get_clean();
-        var_dump( $stmt->errorInfo() );
-      }
+  protected static function handle_errors_if_any($stmt, $query, $params){
+    if($stmt->errorInfo() && $stmt->errorInfo()[0] != "0000"){
+      \app\error::php_error(-1, $stmt->errorInfo(), $query, $params);
     }
   }
 }

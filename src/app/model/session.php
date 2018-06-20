@@ -33,7 +33,7 @@ class session extends model {
 
     if(!hash_equals(hash_hmac('sha256', $hex_user_id .":". $token, SITE_CONFIG["cookie_key"]), $cookie_key)) return false;
 
-    if(hexdec($hex_user_id )==0) return self::find_by_anonymous_and_token($token);
+    if(hexdec($hex_user_id)==0) return self::find_by_anonymous_and_token($token);
     else return self::find_by_user_id_and_token(hexdec($hex_user_id), $token);
   }
 
