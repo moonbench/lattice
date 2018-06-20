@@ -4,7 +4,7 @@ namespace app\model;
 abstract class model implements \JsonSerializable{
   static protected $current_transaction = null;
   protected static $cache = [];
-  const TABLE_PREFIX = "alphapz_";
+  const TABLE_PREFIX = "site_";
 
 
   public function __construct($data = array()){
