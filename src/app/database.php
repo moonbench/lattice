@@ -23,7 +23,7 @@ class database{
     }
 
     $stmt->execute();
-    self::handle_errors_if_any($stmt, $query, $params);
+    self::handle_errors_if_any($stmt, $query);
 
     return $stmt;
   }
@@ -73,9 +73,9 @@ class database{
     return new \PDO($database_selection, $username, $password);
   }
 
-  protected static function handle_errors_if_any($stmt, $query, $params){
+  protected static function handle_errors_if_any($stmt, $query){
     if($stmt->errorInfo() && $stmt->errorInfo()[0] != "0000"){
-      \app\error::php_error(-1, $stmt->errorInfo(), $query, $params);
+      \app\error::php_error(-1, $stmt->errorInfo(), $query, 1);
     }
   }
 }
