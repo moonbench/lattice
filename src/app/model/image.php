@@ -1,7 +1,5 @@
 <?php
 namespace app\model;
-require_once APP_ROOT . "common/files.php";
-require_once APP_ROOT . "common/images.php";
 
 class image extends model {
   protected static $table = "images";

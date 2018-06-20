@@ -70,4 +70,12 @@ function sql_find($query, $params = []){
 function sql_set($query, $params = []){
   return \app\database::set($query, $params);
 }
+
+
+/**
+ * Other common files
+ */
+require_once APP_ROOT."common/files.php";
+require_once APP_ROOT."common/images.php";
+require_once APP_ROOT."common/text.php";
 ?>

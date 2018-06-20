@@ -1,5 +1,4 @@
 <?php
-require_once APP_ROOT . "/common/files.php";
 
 function thumbnail_dimensions_from( $width, $height, $max_width, $max_height ){
   $aspect_ratio = $width / $height;
