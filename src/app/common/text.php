@@ -1,5 +1,9 @@
 <?php
 
+function println($string){
+  echo("${string}\n");
+}
+
 function clean($string){
   return htmlentities(preg_replace('/([\\r\\n][\\r\\n]){2,}/i',"\n\n",trim($string)));
 }

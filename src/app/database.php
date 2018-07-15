@@ -5,6 +5,7 @@ class database{
   protected static $connection;
   protected static $current_transaction = null;
   public static $prefix;
+  public static $config;
 
   public static function find($query, $params = array()){
     $result = self::execute($query, $params)->fetchAll();
@@ -13,6 +14,10 @@ class database{
 
   public static function set($query, $params){
     self::execute($query, $params);
+  }
+
+  public static function sql($query){
+    self::execute($query, []);
   }
 
   protected static function execute($query, $params){
@@ -62,9 +67,13 @@ class database{
     if(file_exists(APP_ROOT."config/database.ini"))
       $config = parse_ini_file(APP_ROOT."config/database.ini");
 
-    self::$prefix = $config["prefix"];
-
     self::$connection = self::connect($config["username"], $config["password"], $config["hostname"], $config["database"]);
+
+    unset($config["username"]);
+    unset($config["password"]);
+    unset($config["hostname"]);
+    unset($config["database"]);
+    self::$config = $config;
   }
 
   protected static function connect($username, $password, $hostname, $database){

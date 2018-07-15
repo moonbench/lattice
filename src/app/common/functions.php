@@ -8,11 +8,10 @@ function get_or_else( $array, $index, $else ){
   return $else;
 }
 
-function clean_var_dump($var){
-  echo("<pre>");
+function inspect($var){
+  println("<pre>");
   var_dump($var);
-  echo("</pre>");
-  echo("<hr/>");
+  println("</pre>");
 }
 
 
