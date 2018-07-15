@@ -34,7 +34,7 @@ trait saveable {
   }
 
   protected static function table_name(){
-    return \database::$prefix . static::$table;
+    return \app\database::$prefix . static::$table;
   }
 
   protected static function get_one($data){

@@ -4,7 +4,7 @@ namespace app;
 class database{
   protected static $connection;
   protected static $current_transaction = null;
-  protected static $prefix;
+  public static $prefix;
 
   public static function find($query, $params = array()){
     $result = self::execute($query, $params)->fetchAll();
