@@ -2,6 +2,8 @@
 namespace app\model;
 
 class image extends model {
+  use traits\saveable;
+
   protected static $table = "images";
   const MEDIA_DIRECTORY = "images";
   const THUMBNAIL_DIRECTORY = "images/t";

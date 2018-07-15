@@ -2,6 +2,8 @@
 namespace app\model;
 
 class session extends model {
+  use traits\saveable;
+
   public static $table = "sessions";
   protected static $current;
 

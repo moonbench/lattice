@@ -4,6 +4,7 @@ namespace app;
 class database{
   protected static $connection;
   protected static $current_transaction = null;
+  protected static $prefix;
 
   public static function find($query, $params = array()){
     $result = self::execute($query, $params)->fetchAll();
@@ -60,6 +61,8 @@ class database{
     $config = parse_ini_file(APP_ROOT."config/database.default.ini");
     if(file_exists(APP_ROOT."config/database.ini"))
       $config = parse_ini_file(APP_ROOT."config/database.ini");
+
+    self::$prefix = $config["prefix"];
 
     self::$connection = self::connect($config["username"], $config["password"], $config["hostname"], $config["database"]);
   }

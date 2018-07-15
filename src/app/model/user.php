@@ -2,6 +2,8 @@
 namespace app\model;
 
 class user extends model {
+  use traits\saveable;
+
   protected static $table = "users";
   private static $current_user;
 
