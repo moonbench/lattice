@@ -33,19 +33,19 @@ class error{
 
   protected static function log_error($number, $string, $file, $line){
     self::$errors_seen[] = array(
-      "number" => $number,
-      "string" => $string,
-      "file" => $file,
-      "line" => $line
+      'number' => $number,
+      'string' => $string,
+      'file' => $file,
+      'line' => $line
     );
   }
 
   protected static function print_error($error_data){
-    $error_string = "[Error: #" . $error_data["number"] . "] ";
-    $error_string .= "<br/>". $error_data["string"] . " ";
-    $error_string .= "<br/>". $error_data["file"];
-    $error_string .= ":" . $error_data["line"];
-    echo("<pre>".$error_string."</pre>");
+    $error_string = '[Error: #' . $error_data['number'] . '] ';
+    $error_string .= '<br/>'. $error_data['string'] . ' ';
+    $error_string .= '<br/>'. $error_data['file'];
+    $error_string .= ':' . $error_data['line'];
+    echo('<pre>'.$error_string.'</pre>');
   }
 }
 

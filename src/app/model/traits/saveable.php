@@ -2,8 +2,10 @@
 namespace app\model\traits;
 
 trait saveable {
-  static protected $current_transaction = null;
+  protected static $current_transaction = null;
   protected static $cache = [];
+
+  abstract public function save();
 
   public static function find_all(){
     if(self::is_in_cache("all")) return self::get_from_cache("all");
@@ -34,11 +36,11 @@ trait saveable {
   }
 
   protected static function table_name(){
-    return \app\database::$config['prefix'] . static::$table;
+    return \app\config::db('prefix') . static::$table;
   }
 
   protected static function get_one($data){
-    return self::get_many($data)[0];
+    return get_or_else(self::get_many($data), 0);
   }
 
   protected static function get_many($data){
@@ -96,30 +98,33 @@ trait saveable {
 
   protected function create_or_update($columns, $values){
     if(isset($this->id)){
-      self::update($this->id, $columns, $values);
+      self::__update($this->id, $columns, $values);
     } else {
-      self::create($columns, $values);
+      self::__create($columns, $values);
       $this->id = \app\database::last_id();
     }
   }
 
-  protected function create($variables, $values){
-    $stmt_columns = array();
-    $stmt_value_placeholders = array();
-
-    foreach($variables as $column_name => $value_placeholder){
-      $stmt_columns[] = "`$column_name`";
-      $stmt_value_placeholders[] = $value_placeholder;
-    }
-
-    $stmt_columns = implode(", ", $stmt_columns);
-    $stmt_value_placeholders = implode(", ", $stmt_value_placeholders);
-    $stmt = "INSERT INTO `".self::table_name()."` ($stmt_columns) VALUES ($stmt_value_placeholders)";
-
-    sql_set($stmt, $values);
+  protected function __insert($columns, $placeholders, $values){
+    sql_set("INSERT INTO `".self::table_name()."` ($columns) VALUES ($placeholders)", $values);
   }
 
-  protected function update($id, $variables, $values){
+  protected function __create($variables, $values){
+    $columns = [];
+    $placeholders = [];
+
+    foreach($variables as $column_name => $placeholder){
+      $columns[] = "`$column_name`";
+      $placeholders[] = $placeholder;
+    }
+
+    $columns = implode(", ", $columns);
+    $placeholders = implode(", ", $placeholders);
+
+    self::__insert($columns, $placeholders, $values);
+  }
+
+  protected function __update($id, $variables, $values){
     $stmt_column_to_placeholder_pairings = array();
     $values[":stmtUpdateId"] = $id;
 
@@ -128,12 +133,12 @@ trait saveable {
     }
 
     $stmt_column_to_placeholder_pairings = implode(", ", $stmt_column_to_placeholder_pairings);
-    $stmt = "UPDATE `".self::table_name()."` SET $stmt_column_to_placeholder_pairings WHERE `$db_table`.`id` = :stmtUpdateId LIMIT 1;";
+    $stmt = "UPDATE `".self::table_name()."` SET $stmt_column_to_placeholder_pairings WHERE `id` = :stmtUpdateId LIMIT 1;";
 
     sql_set($stmt, $values);
   }
 
-  protected function delete(){
+  protected function __delete(){
     $this->deleted_at = date("Y-m-d H:i:s");
     $this->save();
   }

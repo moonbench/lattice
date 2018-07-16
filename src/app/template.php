@@ -9,7 +9,7 @@ class template{
     $this->filepath = APP_ROOT."view/${filename}.tpl.php";
 
     if(!file_exists($this->filepath))
-      trigger_error("Template file '".$this->filepath."' not found");
+      trigger_error("Template file '{$this->filepath}' not found");
   }
 
   public function __get($name){

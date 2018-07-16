@@ -1,7 +1,7 @@
 <?php
 function api_fail(){}
 function web_fail(){
-  //header('Location: '.SITE_ROOT.'/403.php');
+  header('Location: '.SITE_ROOT.'/403.php');
 }
 
 if(!\user::current()->is_logged_in){

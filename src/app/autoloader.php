@@ -22,12 +22,12 @@ class autoloader{
   }
 
   protected function load_model($name){
-    $path = $this->base_path . "/model/" . $name . ".php";
+    $path = $this->base_path . '/model/' . $name . '.php';
     if(self::load_file($path)) class_alias("\\app\\model\\" . $name, $name);
   }
 
   protected function load_general($name){
-    self::load_file($this->base_path."../".str_replace('\\', '/', $name).".php");
+    self::load_file($this->base_path.'../'.str_replace('\\', '/', $name).'.php');
   }
 
   protected static function load_file($file_path){
@@ -36,7 +36,7 @@ class autoloader{
       return true;
     }
 
-    trigger_error("Unable to find file for auto-inclusion: " . $file_path);
+    trigger_error('Unable to find file for auto-inclusion: '.$file_path);
     return false;
   }
 }
