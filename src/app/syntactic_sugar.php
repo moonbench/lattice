@@ -1,9 +1,22 @@
 <?php
 /**
- * Text
+ * Debugging
+ */
+function inspect($variable){
+  println("<pre>");
+  var_dump($variable);
+  println("</pre>");
+}
+
+/**
+ * String formatting
  */
 function println($string){
   echo("${string}\n");
+}
+
+function printlog($string){
+  println("[".date('r')."] ${string}");
 }
 
 function clean($string){
@@ -19,28 +32,29 @@ function make_links_clickable($text){
 }
 
 /**
- * Objects
+ * Value comparison
  */
-function get_or_else($array, $index, $else=null){
-  if(array_key_exists($index, $array)) return $array[$index];
-  return $else;
-}
-
-function inspect($variable){
-  println("<pre>");
-  var_dump($variable);
-  println("</pre>");
-}
-
-/**
- * Integers
- */
-function is_between( $value, $min, $max ){
+function is_between($value, $min, $max){
   return ($value > $min && $value < $max);
 }
 
 /**
- * Time/date
+ * Object & array access
+ */
+function get_or_else($container, $index, $else=null){
+  if(!$container) return $else;
+
+  if(is_object($container))
+    if(property_exists($container, $index) && isset($container->$index)) return $container->$index;
+
+  if(is_array($container))
+    if(array_key_exists($index, $container) && isset($container[$index])) return $container[$index];
+
+  return $else;
+}
+
+/**
+ * Time/date formatting
  */
 function human_time_ago($time){
   $time_since = time() - $time;
@@ -62,8 +76,12 @@ function human_time_ago($time){
   }
 }
 
+function sql_date($time = null){
+  return date("Y-m-d H:i:s", $time ? $time : time());
+}
+
 /**
- * Templates
+ * Template rendering
  */
 function render($template, $vars = []){
   \app\template::render($template, $vars);
@@ -74,7 +92,7 @@ function render_to_string($template, $vars = []){
 }
 
 /**
- * Queries
+ * Database qeries
  */
 function sql_find($query, $params = []){
   return \app\database::find($query, $params);
@@ -85,7 +103,7 @@ function sql_set($query, $params = []){
 }
 
 /**
- * Simple access control
+ * Simple access gating
  */
 function login_enforcement_check(){
   if(!\user::current()->is_logged_in){

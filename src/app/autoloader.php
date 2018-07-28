@@ -14,7 +14,7 @@ class autoloader{
   }
 
   public function notify($class){
-    if(preg_match('/^([a-zA-Z0-9]+)$/', $class, $matches)){
+    if(preg_match('/^([a-zA-Z0-9_]+)$/', $class, $matches)){
       return $this->load_model($matches[1]);
     } else {
       return $this->load_general($class);

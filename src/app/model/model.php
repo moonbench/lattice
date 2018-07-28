@@ -6,7 +6,7 @@ abstract class model implements \JsonSerializable{
     $this->set_values($data);
 
     if(property_exists($this, "created_at") && !isset($this->created_at))
-      $this->created_at = date("Y-m-d H:i:s");
+      $this->created_at = sql_date();
   }
 
   public function __get($property){

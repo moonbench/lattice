@@ -139,7 +139,7 @@ trait saveable {
   }
 
   protected function __delete(){
-    $this->deleted_at = date("Y-m-d H:i:s");
+    $this->deleted_at = sql_date();
     $this->save();
   }
 

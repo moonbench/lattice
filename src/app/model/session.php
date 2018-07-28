@@ -26,7 +26,7 @@ class session extends model {
            "token" => $token,
            "ip" => $_SERVER["REMOTE_ADDR"],
            "user_agent" => $_SERVER["HTTP_USER_AGENT"],
-           "expires_at" => date("Y-m-d H:i:s", $expire_time)]);
+           "expires_at" => sql_date($expire_time)]);
     $session->save();
     self::set_cookie_for_session($session);
 

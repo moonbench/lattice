@@ -15,19 +15,30 @@ class user {
     if(!!\user::find_by_email($email)) return $attempt->fail('User with that email already exists');
 
     $user = self::create_user($username, $email, $password);
-    self::login($username, $password);
+    $login_attempt = self::login($username, $password);
+    if($login_attempt->failed){
+      trigger_error('Unable to log in newly created user');
+      inspect($login_attempt);
+    }
     return attempt::success($user);
   }
 
   public static function login($username, $password){
-    $user = \user::find_by_name($username);
+    if(!\login_attempt::allowed_for_current_ip())
+      return attempt::failure('Too many recent failed login attempts');
 
-    if(!($user instanceof \user)) return attempt::failure('No such user');
+    $user = \user::find_by_name($username);
+    $login_attempt = \login_attempt::create_for_user($user);
+    $login_attempt->save();
+
+    if(!($user instanceof \user))return attempt::failure('No such user');
     if(!password_verify($password, $user->password_hash)) return attempt::failure('Bad password');
 
     $session = \session::create_for_user($user);
     $user->session = $session;
     \user::$current_user = $user;
+    $login_attempt->succeed();
+
     return attempt::success($user);
   }
 
