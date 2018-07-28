@@ -18,7 +18,7 @@ class file extends model {
     $file->filename = $file->make_filename();
     $file->url = $file->make_url($to_directory);
 
-    $file->copy_upload_to_server($to_directory);
+    if(!$file->copy_upload_to_server($to_directory)) return false;
 
     $file->size = filesize(SITE_PATH.$file->url);
     $file->hash = hash_file('sha256', SITE_PATH.$file->url);
@@ -63,7 +63,7 @@ class file extends model {
 
     if(!\app\error::is_empty()) return false;
     self::make_directory_if_needed($filepath);
-    move_uploaded_file($this->upload['tmp_name'], $filepath);
+    return move_uploaded_file($this->upload['tmp_name'], $filepath);
   }
 
   protected static function make_directory_if_needed($filepath){

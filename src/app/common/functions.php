@@ -58,7 +58,7 @@ function human_time_ago($time){
   foreach ($units as $unit => $label) {
     if ($time_since < $unit) continue;
     $quantity = floor($time_since / $unit);
-    return $quantity.' '.$label.(($numberOfUnits>1)?'s':'');
+    return $quantity.' '.$label.(($quantity>1)?'s':'');
   }
 }
 
@@ -82,5 +82,17 @@ function sql_find($query, $params = []){
 
 function sql_set($query, $params = []){
   return \app\database::set($query, $params);
+}
+
+/**
+ * Simple access control
+ */
+function login_enforcement_check(){
+  if(!\user::current()->is_logged_in){
+    http_response_code(403);
+    header('Location: '.SITE_ROOT.'/403.php');
+    die("Not authorized.");
+  }
+  return true;
 }
 ?>
