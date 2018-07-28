@@ -46,14 +46,14 @@ function human_time_ago($time){
   $time_since = time() - $time;
 
   $units = array (
-	  31536000 => 'year',
-		2592000 => 'month',
-		604800 => 'week',
-		86400 => 'day',
-		3600 => 'hour',
-		60 => 'minute',
-		1 => 'second'
-	);
+    31536000 => 'year',
+    2592000 => 'month',
+    604800 => 'week',
+    86400 => 'day',
+    3600 => 'hour',
+    60 => 'minute',
+    1 => 'second'
+  );
 
   foreach ($units as $unit => $label) {
     if ($time_since < $unit) continue;
