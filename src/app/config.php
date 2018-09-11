@@ -24,12 +24,14 @@ class config {
 
   public static function load_database_config(){
     self::$database_config = parse_ini_file(APP_ROOT.'config/database.default.ini');
-    if(file_exists(APP_ROOT.'config/database.ini')) self::$database_config = parse_ini_file(APP_ROOT.'config/database.ini');
+    if(file_exists(APP_ROOT.'config/database.ini'))
+      self::$database_config = array_merge(self::$database_config, parse_ini_file(APP_ROOT.'config/database.ini'));
   }
 
   public static function load_site_config(){
     self::$site_config = parse_ini_file(APP_ROOT.'config/site.default.ini');
-    if(file_exists(APP_ROOT.'config/site.ini')) self::$site_config = parse_ini_file(APP_ROOT.'config/site.ini');
+    if(file_exists(APP_ROOT.'config/site.ini'))
+      self::$site_config = array_merge(self::$site_config, parse_ini_file(APP_ROOT.'config/site.ini'));
 
     define('SITE_ROOT', self::site('site_root'));
     define('SITE_PATH', APP_ROOT.self::site('app_to_site'));
