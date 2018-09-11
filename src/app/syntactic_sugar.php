@@ -102,6 +102,10 @@ function sql_set($query, $params = []){
   return \app\database::set($query, $params);
 }
 
+function sql($query, $params = []){
+  return \app\database::sql($query, $params);
+}
+
 /**
  * Simple access gating
  */

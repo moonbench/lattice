@@ -14,8 +14,8 @@ class database{
     self::execute($query, $params);
   }
 
-  public static function sql($query){
-    self::execute($query, []);
+  public static function sql($query, $params = []){
+    self::execute($query, $params);
   }
 
   protected static function execute($query, $params){
