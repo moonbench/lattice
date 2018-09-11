@@ -10,7 +10,7 @@ function parameter_check(){
 
 if(!MIGRATIONS_ENABLED){
   println("Error: Migrations are disabled.");
-  println("View '" . dirname(__FILE__) . "' for more information.");
+  println("View '" . dirname(__FILE__) . "/main.php' for more information.");
   die();
 } elseif (!parameter_check()){
   println("Error: Please add --cli=1 to execute command-line script.");
